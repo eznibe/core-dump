@@ -8,13 +8,17 @@ if (!process.parent) { setup(args, dump) }
 module.exports = dump
 dump.setup = function (args) { return setup(args || {}, dump) }
 
+dump.afterSignalHandler = function(signal, callback) {
+  setup.registerHandler(signal, callback)
+}
+
 function dump(file) {
   var result = false
   debug('Attempting to generate core dump')
-  if (process.platform !== 'linux') { 
+  if (process.platform !== 'linux') {
     debug('Not a linux system, cannot generate core dump')
   } else {
-    result = gcore.gcore(file || 'core') 
+    result = gcore.gcore(file || 'core')
   }
   if (result) { debug('successfully generated core file: ' + (file || 'core')) }
   return result
